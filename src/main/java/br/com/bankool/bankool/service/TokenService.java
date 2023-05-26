@@ -15,8 +15,8 @@ public class TokenService {
 
     public String generateToken(UserModel user){
         return JWT.create()
-                .withSubject(user.getUSUNAME())
-                .withClaim("Id", user.getID())
+                .withSubject(user.getUsername())
+                .withClaim("Id", user.getId())
                 .withExpiresAt(LocalDateTime.now()
                 .plusMinutes(10)
                 .toInstant(ZoneOffset.of("-03:00"))

@@ -18,60 +18,62 @@ import jakarta.persistence.Table;
 public class UserModel implements UserDetails{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int ID;
-    public int getID() {
-        return ID;
+    private int id;
+    private String email;
+    private String password;
+
+
+    public int getId() {
+        return id;
     }
-    public void setID(int iD) {
-        ID = iD;
+
+    public void setId(int id) {
+        this.id = id;
     }
-    private String USUEMAIL;
-    public String getUSUEMAIL() {
-        return USUEMAIL;
+
+    public void setPassword(String password) {
+        this.password = password;
     }
-    public void setUSUEMAIL(String uSUEMAIL) {
-        USUEMAIL = uSUEMAIL;
+
+    public String getEmail() {
+        return email;
     }
-    private String USUPASSWORD;
-    public String getUSUPASSWORD() {
-        return USUPASSWORD;
-    }
-    public void setUSUPASSWORD(String uSUPASSWORD) {
-        USUPASSWORD = uSUPASSWORD;
-    }
-    private String USUNAME;
-    public String getUSUNAME() {
-        return USUNAME;
-    }
-    public void setUSUNAME(String uSUNAME) {
-        USUNAME = uSUNAME;
+    public void setEmail(String email) {
+        this.email = email;
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        // TODO Auto-generated method stub
         return new ArrayList<>();
     }
     @Override
     public String getPassword() {
-        return this.USUPASSWORD;
+        // TODO Auto-generated method stub
+        return this.password;
     }
     @Override
     public String getUsername() {
-        return this.USUNAME;
+        // TODO Auto-generated method stub
+       return this.email;
     }
     @Override
     public boolean isAccountNonExpired() {
-       return true;
+        // TODO Auto-generated method stub
+        return true;
     }
     @Override
     public boolean isAccountNonLocked() {
+        // TODO Auto-generated method stub
         return true;
     }
     @Override
     public boolean isCredentialsNonExpired() {
+        // TODO Auto-generated method stub
         return true;
     }
     @Override
     public boolean isEnabled() {
+        // TODO Auto-generated method stub
         return true;
     }
 

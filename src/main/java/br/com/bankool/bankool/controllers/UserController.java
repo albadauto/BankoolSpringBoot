@@ -6,16 +6,18 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.bankool.bankool.dto.UserDTO;
 import br.com.bankool.bankool.models.UserModel;
 import br.com.bankool.bankool.repository.UserRepository;
 import br.com.bankool.bankool.service.TokenService;
-
 
 @RestController
 @RequestMapping("/User")
@@ -31,31 +33,35 @@ public class UserController {
     private TokenService tokenService;
 
     @GetMapping("/Message")
-    public String Message(){
+    public String Message() {
         String teste = "senha123";
         return BCrypt.hashpw(teste, BCrypt.gensalt());
-
     }
 
     @PostMapping("/CreateUser")
-    public UserModel CreateUser(@RequestBody UserModel user){
-        user.setUSUPASSWORD(BCrypt.hashpw(user.getUSUPASSWORD(), BCrypt.gensalt()));
+    public UserModel CreateUser(@RequestBody UserModel user) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        user.setPassword(encoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
     @GetMapping("/GetUsers")
-    public List<UserModel> ListUsers(){
+    public List<UserModel> ListUsers() {
         return userRepository.findAll();
     }
 
     @PostMapping("/Login")
-    public UserModel Login(@RequestBody UserModel user){
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-         new UsernamePasswordAuthenticationToken(user.getUSUEMAIL(), user.getUSUPASSWORD());
+    public String Login(@RequestBody UserDTO user) {
+        try {
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                    user.email(), user.password());
 
-        var authenticate =  this.authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-        var usuario = (UserModel) authenticate.getPrincipal();
-        var token = tokenService.generateToken(user);
-        return new UserModel();
+            var authenticate = this.authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+            var usuario = (UserModel) authenticate.getPrincipal();
+            return tokenService.generateToken(usuario);
+        } catch (AuthenticationException e) {
+            return e.getMessage().toString();
+        }
+
     }
 }
